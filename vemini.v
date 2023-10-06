@@ -7,7 +7,6 @@ import net.urllib
 import net.http.mime
 import io
 
-
 const (
 	status_input            = 10
 	status_success          = 20
@@ -15,10 +14,7 @@ const (
 	status_temporary_failure = 40
 	status_permanent_failure = 50
 )
-
-
 fn main() {
-
 	// check if we are running as root
 	if os.getuid() == 0 || os.geteuid() == 0 {
 		eprintln("Can't run as root")
@@ -67,7 +63,6 @@ fn main() {
     }
 
     serve_gemini(mut listener, content_dir)
-
 }
 
 fn serve_gemini(mut listener mbedtls.SSLListener, content_dir string) {
@@ -84,9 +79,11 @@ fn serve_gemini(mut listener mbedtls.SSLListener, content_dir string) {
 }
 
 fn handle_connection(mut conn mbedtls.SSLConn, content_dir string) {
-	defer { conn.shutdown() or {
-        panic("Problem terminating the connection")
-    } }
+	defer { 
+		conn.shutdown() or {
+        	panic("Problem terminating the connection")
+    	} 
+	}
 
 	// get the request
 	mut reader := io.new_buffered_reader(reader: conn)
@@ -121,6 +118,7 @@ fn handle_connection(mut conn mbedtls.SSLConn, content_dir string) {
 	mut root_dir := ""
 	if !content_dir.starts_with("/") {
 		work_dir := os.getwd()
+		// remove ".", "..", etc to prevent directory walk 
 		root_dir = os.join_path_single(work_dir, content_dir.replace(".", "")) 
 	} else {
 		root_dir = content_dir.replace(".", "")
@@ -139,9 +137,11 @@ fn handle_connection(mut conn mbedtls.SSLConn, content_dir string) {
 		meta = "text/gemini; lang=en; charset=utf-8"
 	}
 
+	// send header
 	eprintln("Write response header")
 	send_response_header(mut conn, status_success, meta)
 
+	// and content
 	eprintln("Write content")
 	send_response_content(mut conn, content.bytes())
 
@@ -160,6 +160,3 @@ fn send_response_content(mut conn mbedtls.SSLConn, content []u8) {
         panic("Problem sending data: ${err}")
 	}
 }
-
-
-
