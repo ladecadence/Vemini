@@ -1,0 +1,7 @@
+# INDEX
+
+prueba de gemini
+
+=> test.gmi Un test
+
+
