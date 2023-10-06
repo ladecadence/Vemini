@@ -14,6 +14,7 @@ const (
 	status_temporary_failure = 40
 	status_permanent_failure = 50
 )
+
 fn main() {
 	// check if we are running as root
 	if os.getuid() == 0 || os.geteuid() == 0 {
