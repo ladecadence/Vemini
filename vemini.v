@@ -25,11 +25,12 @@ fn main() {
 		exit(1)
 	}
 
+	// parse flags
     mut fp := flag.new_flag_parser(os.args)
     fp.application(os.args[0])
     fp.version('v0.0.1')
     fp.limit_free_args(0, 0)!
-    fp.description('Gemini server')
+    fp.description('Vemini server')
     fp.skip_executable()
     
 	hostname := fp.string('hostname', 0, "localhost", 'hostname')
@@ -37,6 +38,7 @@ fn main() {
     crt_filename := fp.string('crt', 0, "./certs/crt.pem", 'cert filename')
     key_filename := fp.string('key', 0, "./certs/key.pem", 'key filename')
     content_dir := fp.string('dir', 0, "./gemini", 'content directory')
+	validate := fp.bool('validate', 0, false, 'validate SSL certificate')
 	port := fp.int("port", 0, 1965, "port number")
 
     fp.finalize() or {
@@ -52,7 +54,7 @@ fn main() {
         verify: root_ca,
 		cert: crt_filename,
 		cert_key: key_filename,
-		validate: false,
+		validate: validate,
 		in_memory_verification: false
 	}
 

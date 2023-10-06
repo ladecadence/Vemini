@@ -5,9 +5,11 @@ Vemini is a really small [gemini](https://geminiprotocol.net/) server written in
 ## Usage
 
 ```
-./vemini [--root <root CA certs>] [--crt <SSL certificate>] [--key <SSL cert key>] [--dir <content directory>] [--host <hostname>] [--port <port>]
+./vemini [--root <root CA certs>] [--crt <SSL certificate>] [--key <SSL cert key>] [--validate] [--dir <content directory>] [--host <hostname>] [--port <port>]
 
 ```
+
+* --validate validates the SSL certificate (no self signed, etc)
 
 All options have simple defaults if you don't want to pass arguments:
 * --root: ./certs/root.ca
