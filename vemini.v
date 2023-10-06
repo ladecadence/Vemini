@@ -73,7 +73,7 @@ fn serve_gemini(mut listener mbedtls.SSLListener, content_dir string) {
             eprintln("Error with the connection: ${err}")
 			continue
 		}
-		eprintln("Accept connection")
+		eprintln("Accept connection:")
 
 		go handle_connection(mut conn, content_dir)
 	}
@@ -104,6 +104,13 @@ fn handle_connection(mut conn mbedtls.SSLConn, content_dir string) {
 		return
 	}
 
+	// log client addr
+	client := conn.peer_addr() or { 
+		eprintln("Can't get client address")
+		return
+	}
+	eprintln("${client.str()} : ${req_url}")
+
 	// If the URL ends with a '/' character, assume that the user wants the index.gmi
 	// file in the corresponding directory.
 	mut req_path := ""
@@ -113,7 +120,6 @@ fn handle_connection(mut conn mbedtls.SSLConn, content_dir string) {
 		req_path = req_url.path
 	}
 	clean_path := os.real_path(req_path)
-	eprintln("Request file: ${clean_path}")
 	
 	// If the content directory is not specified as an absolute path, make it absolute.
 	mut root_dir := ""
@@ -139,14 +145,11 @@ fn handle_connection(mut conn mbedtls.SSLConn, content_dir string) {
 	}
 
 	// send header
-	eprintln("Write response header")
 	send_response_header(mut conn, status_success, meta)
-
 	// and content
-	eprintln("Write content")
 	send_response_content(mut conn, content.bytes())
 
-	eprintln("Close connection")
+	eprintln("Close connection.")
 }
 
 fn send_response_header(mut conn mbedtls.SSLConn, status_code int, meta string) {
